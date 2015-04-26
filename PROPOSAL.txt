@@ -1,0 +1,22 @@
+For Thomas Kim, Benny Renard, and Patrick Aupperle
+
+Emulate the NES pAPU (pseudo audio processing unit).
+
+Components:
+2x Square Wave Generators
+1x Triangle Wave Generator
+1x Noise Channel
+1x PCM (digital) channel
+Wave Combiner
+Analog-to-Digital Convertor
+
+Goals:
+1. Successfully approximate NES audio through emulation
+2. Play an NES audio file on the FPGA board
+
+Implementation:
+The chip will be implemented by emulating, based on the specification released by various enthusiast individuals on the internet, the wave units and respective gates used to modify the characteristics of each wave. The final output waves will be combined in hardware, then output directly to speakers through an Analog-to-Digital Converter. Additionally, the DMA register interface used by the NES itself will be implemented according to the aforementioned specification.
+ 
+ The design of each wave generator follows a general pattern. First, a divider adjusts the clock frequency of the wave unit, determining the frequency of sound to be output. Then, an input signal is calculated based on register parameters, which is modified during each tick of the clock divider output as it passes through a series of gates. Each gate can be controlled by adjusting certain parameters in the DMA registers. Difficulties are likely to arise regarding accurate generation of digital signals, as the NES pAPU lacks official documentation. Furthermore, accumulated approximation errors regarding clock speeds can cause incorrect-sounding output despite each step having only a small amount of error.
+
+ To demo the project, it is planned to play an NES audio file on the FPGA board. However, some level of propagated error is predicted as there are multiple stages in the production of each wave, so it is likely that the sound will not be completely faithful to the original chip itself. In particular, frequency round-offs and hardware quirks are difficult to precisely emulate, so they will be ignored. Instead, an attempt will be made to explain the source of any such errors.
