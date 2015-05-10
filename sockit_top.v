@@ -37,19 +37,8 @@ i2c_av_config av_config (
     .reset (reset),
     .i2c_sclk (AUD_I2C_SCLK),
     .i2c_sdat (AUD_I2C_SDAT),
-    .status (dummy)
+    .status (LED)
 );
-
-reg[16:0] count = 0;
-reg temp = 0;
-assign LED[0] = SW[0];
-assign LED[1] = SW[1];
-assign LED[2] = SW[2];
-assign LED[3] = SW[3];
-assign LEDEXTRA = temp;
-always@(posedge audio_clk) begin
-		temp <= 1;
-end
 
 assign AUD_XCK = audio_clk;
 assign AUD_MUTE = (SW != 4'b0);
