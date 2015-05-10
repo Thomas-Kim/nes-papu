@@ -1,0 +1,93 @@
+# -------------------------------------------------------------------------- #
+#
+# Copyright (C) 1991-2014 Altera Corporation. All rights reserved.
+# Your use of Altera Corporation's design tools, logic functions 
+# and other software and tools, and its AMPP partner logic 
+# functions, and any output files from any of the foregoing 
+# (including device programming or simulation files), and any 
+# associated documentation or information are expressly subject 
+# to the terms and conditions of the Altera Program License 
+# Subscription Agreement, the Altera Quartus II License Agreement,
+# the Altera MegaCore Function License Agreement, or other 
+# applicable license agreement, including, without limitation, 
+# that your use is for the sole purpose of programming logic 
+# devices manufactured by Altera and sold by Altera or its 
+# authorized distributors.  Please refer to the applicable 
+# agreement for further details.
+#
+# -------------------------------------------------------------------------- #
+#
+# Quartus II 64-Bit
+# Version 14.1.0 Build 186 12/03/2014 SJ Web Edition
+# Date created = 01:33:17  May 10, 2015
+#
+# -------------------------------------------------------------------------- #
+#
+# Notes:
+#
+# 1) The default values for assignments are stored in the file:
+#		fpga-sine_assignment_defaults.qdf
+#    If this file doesn't exist, see file:
+#		assignment_defaults.qdf
+#
+# 2) Altera recommends that you do not modify this file. This
+#    file is updated automatically by the Quartus II software
+#    and any changes you make may be lost or overwritten.
+#
+# -------------------------------------------------------------------------- #
+
+
+set_global_assignment -name FAMILY "Cyclone V"
+set_global_assignment -name DEVICE 5CGXFC5C6F27C7
+set_global_assignment -name TOP_LEVEL_ENTITY sockit_top
+set_global_assignment -name ORIGINAL_QUARTUS_VERSION 14.1.0
+set_global_assignment -name PROJECT_CREATION_TIME_DATE "01:33:17  MAY 10, 2015"
+set_global_assignment -name LAST_QUARTUS_VERSION 14.1.0
+set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
+set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
+set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
+set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR 256
+set_location_assignment PIN_D7 -to AUD_ADCDAT
+set_location_assignment PIN_C7 -to AUD_ADCLRCK
+set_location_assignment PIN_E6 -to AUD_BCLK
+set_location_assignment PIN_H10 -to AUD_DACDAT
+set_location_assignment PIN_G10 -to AUD_DACLRCK
+set_location_assignment PIN_B7 -to AUD_I2C_SCLK
+set_location_assignment PIN_G11 -to AUD_I2C_SDAT
+set_location_assignment PIN_D6 -to AUD_XCK
+set_location_assignment PIN_AC9 -to SW[0]
+set_location_assignment PIN_AE10 -to SW[1]
+set_location_assignment PIN_AD13 -to SW[2]
+set_location_assignment PIN_AC8 -to SW[3]
+set_location_assignment PIN_F7 -to LED[0]
+set_location_assignment PIN_F6 -to LED[1]
+set_location_assignment PIN_G6 -to LED[2]
+set_location_assignment PIN_G7 -to LED[3]
+set_location_assignment PIN_P11 -to KEY[0]
+set_location_assignment PIN_P12 -to KEY[1]
+set_location_assignment PIN_Y15 -to KEY[2]
+set_location_assignment PIN_Y16 -to KEY[3]
+set_location_assignment PIN_AB24 -to RESET_n
+set_location_assignment PIN_B7 -to SI5338_SCL
+set_location_assignment PIN_G11 -to SI5338_SDA
+set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
+set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_global_assignment -name SIP_FILE clock_pll.sip
+set_global_assignment -name SOURCE_FILE clock_pll.cmp
+set_global_assignment -name QIP_FILE clock_pll.qip
+set_global_assignment -name VERILOG_FILE clock_pll.v
+set_global_assignment -name VERILOG_FILE sockit_top.v
+set_global_assignment -name VERILOG_FILE i2c_controller.v
+set_global_assignment -name VERILOG_FILE i2c_av_config.v
+set_global_assignment -name VERILOG_FILE audio_effects.v
+set_global_assignment -name VERILOG_FILE audio_codec.v
+set_global_assignment -name CDF_FILE ../../Downloads/Chain1.cdf
+set_global_assignment -name CDF_FILE Chain2.cdf
+set_global_assignment -name CDF_FILE output_files/chain.cdf
+set_location_assignment PIN_J8 -to LEDEXTRA
+set_location_assignment PIN_M10 -to CLOCK_50_B8A
+set_location_assignment PIN_N20 -to CLOCK_50_B6A
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
