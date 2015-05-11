@@ -14,7 +14,7 @@ reg [15:0] dat;
 
 assign audio_output = dat;
 
-noise nc0(clk,0,0,0,noise_out);
+noise nc0(clk,8'b00000001,0,0,noise_out);
 square sc0(clk,8'b10000010, 8'b0001000, 0, 0, sq1_out);
 
 parameter SINE     = 0;
