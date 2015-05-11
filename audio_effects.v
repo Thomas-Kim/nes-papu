@@ -269,10 +269,12 @@ initial begin
 
 end
 
+reg[6:0] sqc = 0;
 always @(posedge clk) begin
     if (sample_end) begin
         last_sample <= audio_input;
     end
+    sqc <= sqc + 1;
 
     /*if (sample_req) begin
         if (control[FEEDBACK])
@@ -295,6 +297,12 @@ always @(posedge clk) begin
 	 else if(control[1]) begin
 		dat <= sq1_out > 0 ?  16'h4000 : 0;
 	 end
+         else if(control[2]) begin
+                dat <= noise_out > 0 ? 16'h4000 : 0;
+         end
+         else if(control[3]) begin
+                dat <= sqc > 7'b1000000 ? 16'h4000 : 0;
+         end
 end
 
 endmodule
