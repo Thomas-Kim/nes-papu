@@ -14,10 +14,8 @@ reg [15:0] dat;
 
 assign audio_output = dat;
 
-wire noise_en;
-noise nc0(clk,0,0,0,noise_en);
-wire [3:0]square_vol;
-square sc0(clk,8'b10000010, 8'b0001000, 0, 0, square_vol);
+noise nc0(clk,0,0,0,noise_out);
+square sc0(clk,8'b10000010, 8'b0001000, 0, 0, sq1_out);
 
 parameter SINE     = 0;
 parameter FEEDBACK = 1;
@@ -295,7 +293,7 @@ always @(posedge clk) begin
 		dat <= sq_tbl[sq1_out + sq2_out] + tnd_tbl[3 * tr_out + 2 * noise_out + dmc_out];
 	 end
 	 else if(control[1]) begin
-		dat <= square_vol << 10;
+		dat <= sq1_out > 0 ?  16'h4000 : 0;
 	 end
 end
 

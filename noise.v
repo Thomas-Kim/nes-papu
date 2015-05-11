@@ -2,7 +2,7 @@
 
 `define MULT 25
 
-module noise(input clk, input[7:0] r400c, input[7:0] r400e, input[7:0] r400f, output en);
+module noise(input clk, input[7:0] r400c, input[7:0] r400e, input[7:0] r400f, output vol);
     // constants and tables
     // If bit 5 == 0, use ltable 0
     reg[8:0] ltable0[15:0];
@@ -87,6 +87,9 @@ module noise(input clk, input[7:0] r400c, input[7:0] r400e, input[7:0] r400f, ou
     assign en = out;
     reg c;
     always@(posedge clk) begin
+        if(r400e_changed) begin
+            shift <= ptable[pi];
+        end
         // shift register shifting
         shift[0] <= shift[1];
         shift[1] <= shift[2];
@@ -107,20 +110,23 @@ module noise(input clk, input[7:0] r400c, input[7:0] r400e, input[7:0] r400f, ou
         shift[14] <= mode == 0 ? shift[0] ^ shift[1] :
                                  shift[0] ^ shift[6];
         counter <= counter == 0 ? counter : counter - 1;
-        out <= shift[0] ? 0 : 1; // TODO else case seems to be unknown?
+        out <= shift[0] ? 0 : n;
     end
     // TODO status register counter disable
     // The counter is reset when r400f (?) TODO 4th register is written
     // TODO conflict updating shift/counter in 2 always blocks
+    reg r400e_changed = 0;
     always@(posedge r400f) begin
         counter <= hlt        ? 0 :
                    lmode == 0 ? ltable0[li] :
                                 ltable1[li];
     end
 
-    //always@(posedge r400e) begin
-    //    shift <= ptable[pi];
-    //end
+    always@(posedge r400e) begin
+        if(r400e_changed == 0) begin
+            r400e_changed <= 1;
+        end
+    end
 endmodule
 
 module clock(output clk);
