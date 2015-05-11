@@ -294,7 +294,7 @@ always @(posedge clk) begin
 	 if(control[0]) begin
 		dat <= sq_tbl[sq1_out + sq2_out] + tnd_tbl[3 * tr_out + 2 * noise_out + dmc_out];
 	 end
-	 if else(control[1]) begin
+	 else if(control[1]) begin
 		dat <= square_vol << 10;
 	 end
 end
