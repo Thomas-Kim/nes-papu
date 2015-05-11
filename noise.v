@@ -60,6 +60,7 @@ module noise(input clk, input[7:0] r400c, input[7:0] r400e, input[7:0] r400f, ou
         ptable[13] = 12'h3f8;
         ptable[14] = 12'h7f2;
         ptable[15] = 12'hfe4;
+        shift = ptable[0];
     end
     // Register fields
     // loop env + disable length (halt)
@@ -116,9 +117,10 @@ module noise(input clk, input[7:0] r400c, input[7:0] r400e, input[7:0] r400f, ou
                    lmode == 0 ? ltable0[li] :
                                 ltable1[li];
     end
-    always@(posedge r400e) begin
-        shift <= ptable[pi];
-    end
+
+    //always@(posedge r400e) begin
+    //    shift <= ptable[pi];
+    //end
 endmodule
 
 module clock(output clk);
