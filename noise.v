@@ -87,9 +87,20 @@ module noise(input clk, input[7:0] r400c, input[7:0] r400e, input[7:0] r400f, ou
     reg c;
     always@(posedge clk) begin
         // shift register shifting
-        for(c = 0; c < 14; c = c + 1) begin
-            shift[c] <= shift[c+1];
-        end
+        shift[0] <= shift[1];
+        shift[1] <= shift[2];
+        shift[2] <= shift[3];
+        shift[3] <= shift[4];
+        shift[4] <= shift[5];
+        shift[5] <= shift[6];
+        shift[6] <= shift[7];
+        shift[7] <= shift[8];
+        shift[8] <= shift[9];
+        shift[9] <= shift[10];
+        shift[10] <= shift[11];
+        shift[11] <= shift[12];
+        shift[12] <= shift[13];
+        shift[13] <= shift[14];
         // set the 14th bit based on the mode field of r400e
         // TODO confirm what pre-shifted means
         shift[14] <= mode == 0 ? shift[0] ^ shift[1] :
