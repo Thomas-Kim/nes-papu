@@ -2,7 +2,7 @@
 
 `define MULT 25
 
-module noise(input clk, input[7:0] r400c, input[7:0] r400e, input[7:0] r400f, output[3:0] dac);
+module noise(input clk, input[7:0] r400c, input[7:0] r400e, input[7:0] r400f, output en);
     // constants and tables
     // If bit 5 == 0, use ltable 0
     reg[8:0] ltable0[15:0];
@@ -82,8 +82,8 @@ module noise(input clk, input[7:0] r400c, input[7:0] r400e, input[7:0] r400f, ou
     // 15-bit shift register
     reg[14:0] shift;
     reg[7:0]  counter;
-    reg[3:0]  out = 0;
-    assign dac = out;
+    reg       out = 0;
+    assign en = out;
     reg c;
     always@(posedge clk) begin
         // shift register shifting
@@ -95,7 +95,7 @@ module noise(input clk, input[7:0] r400c, input[7:0] r400e, input[7:0] r400f, ou
         shift[14] <= mode == 0 ? shift[0] ^ shift[1] :
                                  shift[0] ^ shift[6];
         counter <= counter == 0 ? counter : counter - 1;
-        out <= shift[0] ? 0 : shift[3:0]; // TODO else case seems to be unknown?
+        out <= shift[0] ? 0 : 1; // TODO else case seems to be unknown?
     end
     // TODO status register counter disable
     // The counter is reset when r400f (?) TODO 4th register is written

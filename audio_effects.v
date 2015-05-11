@@ -14,6 +14,9 @@ reg [15:0] dat;
 
 assign audio_output = dat;
 
+wire noise_en;
+noise nc0(clk,0,0,0,noise_en);
+
 parameter SINE     = 0;
 parameter FEEDBACK = 1;
 
@@ -125,7 +128,7 @@ always @(posedge clk) begin
         last_sample <= audio_input;
     end
 
-    if (sample_req) begin
+    /*if (sample_req) begin
         if (control[FEEDBACK])
             dat <= last_sample;
         else if (control[SINE]) begin
@@ -136,6 +139,9 @@ always @(posedge clk) begin
                 index <= index + 1'b1;
         end else
             dat <= 16'd0;
+    end*/
+    if(control[0]) begin
+        dat <= noise_en ? 16'h8003 : 16'h0000;
     end
 end
 
