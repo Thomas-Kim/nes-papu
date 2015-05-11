@@ -68,11 +68,12 @@ module square(input clk, input[7:0] r4000, input[7:0] r4001, input[7:0] r4002, i
     end
     // Register fields
     // loop env + disable length (halt)
-    wire[3:0]   vol = r4000[0:3];
+    wire[3:0]   rvol = r4000[3:0];
     wire hlt = 0;
 
-    wire[1:0] duty_type = r4000[6:7];
-    wire[2:0] pindex = r4001[4:6];
+    wire[1:0] dtype = r4000[7:6];
+    wire[2:0] pindex = r4001[6:4];
+    wire      swen = r4001[7];
     // Duty Cycle Generator counter
     reg[3:0]  duty_counter = 0;
     reg[3:0]  out = 0;
@@ -81,35 +82,14 @@ module square(input clk, input[7:0] r4000, input[7:0] r4001, input[7:0] r4002, i
     reg c;
     always@(posedge clk) begin
         ptimer <= ptimer == 0 ? ptable[pindex] : ptimer - 1;
-        if(ptimer == 0) begin
+        //if(ptimer == 0) begin
             duty_counter <= duty_counter + 1;
-        end
-        if(duty_counter <= dtable[duty_table]) begin
-            out <= vol;
+        //end
+        if(duty_counter <= dtable[dtype]) begin
+            out <= rvol;
         end
         else begin
             out <= 0;
-        end
-    end
-endmodule
-
-module clock(output clk);
-    reg clock = 1;
-    assign clk = clock;
-    always begin
-        #500;
-        clock = !clock;
-    end
-endmodule
-
-module divider(input base, input[15:0] count, output clk);
-    reg[15:0] counter = 0;
-    reg       outputclk = 0;
-    assign clk = outputclk;
-    always@(posedge base) begin
-        counter <= counter + 1;
-        if(counter == count) begin
-            outputclk <= !outputclk;
         end
     end
 endmodule
