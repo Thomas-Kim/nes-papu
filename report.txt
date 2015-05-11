@@ -1,0 +1,23 @@
+Start of our report.
+
+
+Overarching Notes
+>>Discuss how we borrowed code from the SAMPLE DUDE,
+>>Discuss how we changed the clock to be the same as the NES clock w/ the clock_pll,
+>>Discuss the resources (references) we used to determine the specs of our stuff,
+>>Discuss how we only had one 16-bit DAC, instead of multiple smaller DACs and (more specialized hardware) mixing.
+
+Specifics:
+>>Square Wave
+>>Triangle wave
+	>>Discuss how you get different pitches by sampling faster with the same triangle! :P
+>>Noise channel
+	>>Woo random numbers :P
+>>DCM (if we get it)
+	>>Discuss how this would be controlled in the code somewhat
+	>>Talk about how using this in an actual game (a lot) would require slowing the play due to memory accesses (each read paused CPU for 4 cycles), is stored as sequence of 1-bit deltas.
+>>Wave combinor / DAC
+	>>Specific equations used-- didn't use theirs, exactly; used our own, based on the max values and such
+	>>Still used a lookup table, but scaled the values from 16'h0000 -> 16'hffff instead of 0.0 -> 1.0 (did so in C code, produced the table).
+	>>Note that this is a 16-bit shindig, BUT the NES would have only 8-bit audio (I believe)... Anyways, on the NES, I believe this mixing was done with hardware (analog hardware), which is why the (rough) scaling here was 0->1 in the equations we were using.
+	>>Didn't respect the variation amoung the diff wave types (triangle, noise, dcm) exactly. Still would be non-linear scaling, I believe.
