@@ -69,23 +69,33 @@ module square(input clk, input[7:0] r4000, input[7:0] r4001, input[7:0] r4002, i
     // Register fields
     // loop env + disable length (halt)
     wire[3:0]   rvol = r4000[3:0];
-    wire hlt = 0;
+    wire        env_disable = r4000[4];
+    wire        len_disable = r4000[5];
+    wire[1:0]   dtype = r4000[7:6];
 
-    wire[1:0] dtype = r4000[7:6];
-    wire[2:0] pindex = r4001[6:4];
-    wire      swen = r4001[7];
+    wire[2:0]   rs = r4001[2:0];
+    wire        dec_wavelength = r4001[3];
+    wire[2:0]   pindex = r4001[6:4];
+    wire        swen = r4001[7];
+
+    wire[9:0]   wavelength;
+    assign wavelength[7:0] = r4002;
+    assign wavelength[9:7] = r4003[2:0];
+    wire[4:0]   lreg = r4003[7:3];
+
     // Duty Cycle Generator counter
     reg[3:0]  duty_counter = 0;
     reg[3:0]  out = 0;
     reg[11:0] ptimer = 0;
+    wire hlt = 0;
     assign vol = out;
     reg c;
     always@(posedge clk) begin
         ptimer <= ptimer == 0 ? ptable[pindex] : ptimer - 1;
-        //if(ptimer == 0) begin
+        if(ptimer == 0) begin
             duty_counter <= duty_counter + 1;
-        //end
-        if(duty_counter <= dtable[dtype]) begin
+        end
+        if(duty_counter < dtable[dtype] + 1) begin
             out <= rvol;
         end
         else begin
