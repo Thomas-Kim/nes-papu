@@ -83,6 +83,13 @@ module square(input clk, input[7:0] r4000, input[7:0] r4001, input[7:0] r4002, i
     assign wavelength[9:7] = r4003[2:0];
     wire[4:0]   lreg = r4003[7:3];
 
+	 // For sweeping
+	 // TODO: subtract one from the decrement side in square channel 1
+	 wire[9:0] newWavelength = ~swen ? wavelength :
+										dec_wavelength ? wavelength - wavelength >> rs :
+										wavelength + wavelength >> rs;
+	 
+	 
     // Duty Cycle Generator counter
     reg[3:0]  duty_counter = 0;
     reg[3:0]  out = 0;
@@ -102,4 +109,10 @@ module square(input clk, input[7:0] r4000, input[7:0] r4001, input[7:0] r4002, i
             out <= 0;
         end
     end
+	 
+	 // Sweep unit
+	 // TODO: somehow convince this to run at 1/(1 + pindex) hertz
+	 // Commented out since it would likely work too fast to be useful. 
+	 // wavelength <= newWavelength;
+
 endmodule
