@@ -13,7 +13,8 @@ module sockit_top (
 
     input  [3:0] KEY,
     input  [3:0] SW,
-    output [3:0] LED
+    output [3:0] LED,
+	 output 		  LEDEXTRA
 );
 
 wire reset = !KEY[0];
@@ -66,7 +67,8 @@ audio_effects ae (
     .sample_req (sample_req[1]),
     .audio_output (audio_output),
     .audio_input  (audio_input),
-    .control (SW)
+    .control (SW),
+	 .status(LEDEXTRA)
 );
 
 endmodule

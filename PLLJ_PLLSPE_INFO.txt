@@ -1,5 +1,5 @@
 PLL_Name	clock_pll:pll|clock_pll_0002:clock_pll_inst|altera_pll:altera_pll_i|general[0].gpll~FRACTIONAL_PLL
-PLLJITTER	140
+PLLJITTER	26
 PLLSPEmax	50
 PLLSPEmin	-50
 

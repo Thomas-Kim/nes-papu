@@ -12,7 +12,7 @@
 # or its authorized distributors. Please refer to the applicable 
 # agreement for further details.
 
-# ACDS 14.1 186 win32 2015.05.11.17:17:55
+# ACDS 14.1 186 win32 2015.05.12.15:11:21
 
 # ----------------------------------------
 # Auto-generated simulation script
@@ -34,7 +34,7 @@ if ![info exists QSYS_SIMDIR] {
 }
 
 if ![info exists QUARTUS_INSTALL_DIR] { 
-  set QUARTUS_INSTALL_DIR "D:/altera/14.1/quartus/"
+  set QUARTUS_INSTALL_DIR "C:/altera/14.1/quartus/"
 }
 
 # ----------------------------------------

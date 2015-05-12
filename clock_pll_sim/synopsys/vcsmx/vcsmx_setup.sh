@@ -12,7 +12,7 @@
 # or its authorized distributors. Please refer to the applicable 
 # agreement for further details.
 
-# ACDS 14.1 186 win32 2015.05.11.17:17:55
+# ACDS 14.1 186 win32 2015.05.12.15:11:21
 
 # ----------------------------------------
 # vcsmx - auto-generated simulation script
@@ -21,7 +21,7 @@
 # initialize variables
 TOP_LEVEL_NAME="clock_pll"
 QSYS_SIMDIR="./../../"
-QUARTUS_INSTALL_DIR="D:/altera/14.1/quartus/"
+QUARTUS_INSTALL_DIR="C:/altera/14.1/quartus/"
 SKIP_FILE_COPY=0
 SKIP_DEV_COM=0
 SKIP_COM=0

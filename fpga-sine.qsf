@@ -79,10 +79,6 @@ set_location_assignment PIN_J8 -to LEDEXTRA
 set_location_assignment PIN_M10 -to CLOCK_50_B8A
 set_location_assignment PIN_N20 -to CLOCK_50_B6A
 set_global_assignment -name VERILOG_FILE noise.v
-set_global_assignment -name SIP_FILE clock_pll.sip
-set_global_assignment -name SOURCE_FILE clock_pll.cmp
-set_global_assignment -name QIP_FILE clock_pll.qip
-set_global_assignment -name VERILOG_FILE clock_pll.v -library clock_pll
 set_global_assignment -name VERILOG_FILE sockit_top.v
 set_global_assignment -name VERILOG_FILE i2c_controller.v
 set_global_assignment -name VERILOG_FILE i2c_av_config.v
@@ -91,4 +87,6 @@ set_global_assignment -name VERILOG_FILE audio_codec.v
 set_global_assignment -name CDF_FILE ../../Downloads/Chain1.cdf
 set_global_assignment -name CDF_FILE Chain2.cdf
 set_global_assignment -name CDF_FILE output_files/chain.cdf
+set_global_assignment -name QIP_FILE clock_pll.qip
+set_global_assignment -name SIP_FILE clock_pll.sip
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
