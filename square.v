@@ -2,9 +2,12 @@
 
 `define MULT 25
 
-module square(input clk, input[7:0] r4000, input[7:0] r4001, input[7:0] r4002, input[7:0] r4003, output[3:0] vol);
+module square(input clk, input[7:0] r4000, input[7:0] r4001, inout[7:0] r4002_input, inout[7:0] r4003_input, output[3:0] vol);
     // constants and tables
     // If bit 5 == 0, use ltable 0
+	 reg[7:0] r4002;
+	 reg[7:0] r4003;
+	 
     reg[8:0] ltable0[15:0];
     // else use ltable 1
     reg[8:0] ltable1[15:0];
@@ -110,12 +113,20 @@ module square(input clk, input[7:0] r4000, input[7:0] r4001, input[7:0] r4002, i
         end
     end
 	 
+	 always @(r4002_input) begin
+		r4002 <= r4002_input;
+	 end
+	 
+	 always @(r4003_input) begin
+		r4003 <= r4003_input;
+	 end
 	 
 	 // Sweep unit
+	 // Oustide world won't see changes?
+	 // Not sure if problem
 	 always @(posedge sweepClk) begin 
-		// Need to modify these, but they are inputs
-		//r4002 <= newWavelength[7:0];
-		//r4003[2:0] <= newWavelength[10:8];
+		r4002 <= newWavelength[7:0];
+		r4003[2:0] <= newWavelength[10:8];
 	 end
 	 
 
