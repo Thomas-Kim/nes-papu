@@ -14,8 +14,8 @@ reg [15:0] dat;
 
 assign audio_output = dat;
 
-wire noise_en;
-noise nc0(clk,0,0,0,noise_en);
+noise nc0(clk,8'b00000001,0,0,noise_out);
+square sc0(clk,8'b10000010, 8'b0001000, 0, 0, sq1_out);
 
 parameter SINE     = 0;
 parameter FEEDBACK = 1;
@@ -269,10 +269,12 @@ initial begin
 
 end
 
+reg[6:0] sqc = 0;
 always @(posedge clk) begin
     if (sample_end) begin
         last_sample <= audio_input;
     end
+    sqc <= sqc + 1;
 
     /*if (sample_req) begin
         if (control[FEEDBACK])
@@ -292,6 +294,15 @@ always @(posedge clk) begin
 	 if(control[0]) begin
 		dat <= sq_tbl[sq1_out + sq2_out] + tnd_tbl[3 * tr_out + 2 * noise_out + dmc_out];
 	 end
+	 else if(control[1]) begin
+		dat <= sq1_out > 0 ?  16'h4000 : 0;
+	 end
+         else if(control[2]) begin
+                dat <= noise_out > 0 ? 16'h4000 : 0;
+         end
+         else if(control[3]) begin
+                dat <= sqc > 7'b1000000 ? 16'h4000 : 0;
+         end
 end
 
 endmodule
