@@ -20,7 +20,10 @@ square sc0(clk,8'b10000100, 8'b01100000, 0, 0, sq1_inter);
 square sc1(clk,8'b10000100, 8'b01100000, 0, 0, sq2_inter);
 triangle tc0(clk, 0, 0, 8'b11111111, 8'b00000011, tr_inter);
 
-// Lenght Counters here
+lengthCounter nl0(clk, r400c[5], r400f[7:3], r4015[3], r4015[3], noise_inter, noise_out);
+lengthCounter sl0(clk, r4000[5], r4003[7:3], r4015[0], r4015[0], sq1_inter, sq1_out);
+lengthCounter sl1(clk, r4004[5], r4007[7:3], r4015[1], r4015[1], sq2_inter, sq2_out);
+lengthCounter tl0(clk, r4008[7], r400b[7:3], r4015[2], r4015[2], tr_inter, tr_out);
 
 parameter SINE     = 0;
 parameter FEEDBACK = 1;
@@ -57,6 +60,9 @@ reg[8:0] r400c;
 reg[8:0] r400d;
 reg[8:0] r400e;
 reg[8:0] r400f;
+
+// LengthCounter control/output
+reg[7:0] r4015;
 
 // DMC control register fields
 
@@ -419,4 +425,5 @@ module lengthCounter (
 				time_left <= time_left - 1;
 			end
 		end
+	end
 endmodule
