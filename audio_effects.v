@@ -15,11 +15,20 @@ reg [15:0] dat;
 
 assign audio_output = dat;
 
-noise nc0(clk,8'b00000001,8'b00000101,0,noise_out);
-square sc0(clk,8'b10000100, 8'b01100000, 0, 0, sq1_out);
-triangle tc0(clk, 0, 0, 8'b11111111, 8'b00000011, tr_out);
+noise nc0(clk,8'b00000001,8'b00000101,0,noise_inter);
+square sc0(clk,8'b10000100, 8'b01100000, 0, 0, sq1_inter);
+square sc1(clk,8'b10000100, 8'b01100000, 0, 0, sq2_inter);
+triangle tc0(clk, 0, 0, 8'b11111111, 8'b00000011, tr_inter);
+
+// Lenght Counters here
+
 parameter SINE     = 0;
 parameter FEEDBACK = 1;
+
+wire [3:0] sq1_inter;
+wire [3:0] sq2_inter;
+wire [3:0] noise_inter;
+wire [3:0] tr_inter;
 
 wire [3:0] sq1_out;
 wire [3:0] sq2_out;
@@ -300,8 +309,11 @@ module lengthCounter (
 	input clock_disable, 
 	input[4:0] length, 
 	input r4015_in, 
-	output r4015_out
+	output r4015_out,
+	input[3:0] soundIn,
+	output[3:0] soundOut
 );
+	assign soundOut = r4015_in && ~clock_disable && time_left == 0 ? 0 : soundIn;
 	assign r4015_out = time_left != 0;
 	reg[6:0] time_left;
 	wire[6:0] realLength = 
@@ -343,15 +355,12 @@ module lengthCounter (
 	
 	divider d(clk, 29830, counterClk);
 	
-	always @(counterClk) begin
+	always @(posedge counterClk) begin
 		if (~r4015_in) begin
 			time_left <= 0;
 		end
 		else if (~clock_disable) begin
-			if (time_left == 0) begin
-				// Silence the channel
-			end
-			else begin 
+			if (time_left != 0) begin
 				time_left <= time_left - 1;
 			end
 		end
