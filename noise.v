@@ -126,9 +126,9 @@ module noise(input clk, input[7:0] r400c, input[7:0] r400e, input[7:0] r400f, ou
                                 ltable1[li];
     end
 
-    always@(posedge r400e) begin
+    always@(r400e) begin
         if(r400e_changed == 0) begin
-            r400e_changed <= 1;
+            //r400e_changed <= 1;
         end
     end
 endmodule
@@ -147,9 +147,12 @@ module divider(input base, input[15:0] count, output clk);
     reg       outputclk = 0;
     assign clk = outputclk;
     always@(posedge base) begin
-        counter <= counter + 1;
-        if(counter == count) begin
-            outputclk <= !outputclk;
-        end
+        if(counter >= count) begin
+            outputclk <= ~outputclk;
+				counter <= 0;
+		  end
+		  else begin
+		      counter <= counter + 1;
+		  end
     end
 endmodule

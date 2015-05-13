@@ -44,22 +44,22 @@ reg[15:0] sq_tbl[30:0];
 reg[15:0] tnd_tbl[202:0];
 
 // DMC Control registers
-reg[8:0] r4000;
-reg[8:0] r4001;
-reg[8:0] r4002;
-reg[8:0] r4003;
-reg[8:0] r4004;
-reg[8:0] r4005;
-reg[8:0] r4006;
-reg[8:0] r4007;
-reg[8:0] r4008;
-reg[8:0] r4009;
-reg[8:0] r400a;
-reg[8:0] r400b;
-reg[8:0] r400c;
-reg[8:0] r400d;
-reg[8:0] r400e;
-reg[8:0] r400f;
+reg[7:0] r4000;
+reg[7:0] r4001;
+reg[7:0] r4002;
+reg[7:0] r4003;
+reg[7:0] r4004;
+reg[7:0] r4005;
+reg[7:0] r4006;
+reg[7:0] r4007;
+reg[7:0] r4008;
+reg[7:0] r4009;
+reg[7:0] r400a;
+reg[7:0] r400b;
+reg[7:0] r400c;
+reg[7:0] r400d;
+reg[7:0] r400e;
+reg[7:0] r400f;
 
 // LengthCounter control/output
 reg[7:0] r4015;
@@ -342,25 +342,35 @@ initial begin
 end
 
 reg statusreg;
-assign status = statusreg;
+assign status = r4015_out[2];
 always @(posedge clk) begin
+	 statusreg <= tr_out > 0;
 	 if (sample_end) begin
         last_sample <= audio_input;
     end
 	 if(control[0]) begin
 		dat <= sq_tbl[sq1_out + sq2_out] + tnd_tbl[3 * tr_out + 2 * noise_out + dmc_out];
 	 end
-	 else if(control[1]) begin
-		  dat <= sq1_out > 0 ?  16'h4000 : 0;
-		  statusreg <= sq1_out > 0;
+	 if(control[1]) begin
+		  r400c[5] <= 1;
+		  r4000[5] <= 1;
+		  r4004[5] <= 1;
+		  r4008[7] <= 1;
+		  r4015[3:0] <= 4'b0000;
 	 end
     else if(control[2]) begin
-		  dat <= noise_out > 0 ? 16'h4000 : 0;
-		  statusreg <= noise_out > 0;
+		  r4015[3:0] <= 4'b1111;
+		  r400c[5] <= 0;
+		  r4000[5] <= 0;
+		  r4004[5] <= 0;
+		  r4008[7] <= 0;
+
     end
-    else if(control[3]) begin
-		  dat <= tr_out << 11;
-		  statusreg <= tr_out > 4'h8;
+	 if(control[3]) begin
+		  r4003[4:0] <= 5'b11111;
+		  r4007[4:0] <= 5'b11111;
+		  r400b[4:0] <= 5'b11111;
+		  r400f[4:0] <= 5'b11111;
 	 end
 end
 
@@ -377,7 +387,7 @@ module lengthCounter (
 );
 	assign soundOut = r4015_in && ~clock_disable && time_left == 0 ? 0 : soundIn;
 	assign r4015_out = time_left != 0;
-	reg[4:0] last_length;
+	reg[4:0] last_length = 0;
 	reg[6:0] time_left;
 	wire[6:0] real_length = 
 		length == 0 ? 8'h5 :
@@ -416,9 +426,10 @@ module lengthCounter (
 	wire counter_clk;
 	divider d(clk, 29830, counter_clk);
 	
-	always @(length or counter_clk) begin
+	always @(posedge counter_clk) begin
 		if (~r4015_in) begin
 			time_left <= 0;
+			last_length <= 0;
 		end
 		else if (length != last_length) begin
 			time_left <= real_length;
@@ -427,6 +438,7 @@ module lengthCounter (
 		else if (~clock_disable) begin
 			if (time_left != 0) begin
 				time_left <= time_left - 1;
+				last_length <= time_left == 0 ? 0 : last_length;
 			end
 		end
 	end
