@@ -40,6 +40,61 @@ wire [3:0] noise_out;
 reg[15:0] sq_tbl[30:0];
 reg[15:0] tnd_tbl[202:0];
 
+// DMC Control registers
+reg[8:0] r4000;
+reg[8:0] r4001;
+reg[8:0] r4002;
+reg[8:0] r4003;
+reg[8:0] r4004;
+reg[8:0] r4005;
+reg[8:0] r4006;
+reg[8:0] r4007;
+reg[8:0] r4008;
+reg[8:0] r4009;
+reg[8:0] r400a;
+reg[8:0] r400b;
+reg[8:0] r400c;
+reg[8:0] r400d;
+reg[8:0] r400e;
+reg[8:0] r400f;
+
+// DMC control register fields
+
+wire[3:0]  sq1_vol    = r4000[3:0];
+wire[3:0]  sq2_vol    = r4004[3:0];
+wire[3:0]  noise_vol  = r400c[3:0];
+// Square 1 length counter disable
+wire       sq1_lden   = r4000[4];
+wire       sq2_lden   = r4004[4];
+wire       noise_lden = r400c[4];
+
+wire[1:0]  sq1_dtype  = r4000[7:6];
+wire[1:0]  sq2_dtype  = r4004[7:6];
+
+wire[2:0]  sq1_rshift = r4001[2:0];
+wire[2:0]  sq2_rshift = r4005[2:0];
+wire[2:0]  sq1_swen   = r4001[6:4];
+wire[2:0]  sq2_swen   = r4005[6:4];
+
+wire[10:0] sq1_wavelength;
+wire[10:0] sq2_wavelength;
+wire[10:0] tri_wavelength;
+
+assign sq1_wavelength[7:0]  = r4002;
+assign sq1_wavelength[10:8] = r4003[2:0];
+assign sq2_wavelength[7:0]  = r4006;
+assign sq2_wavelength[10:8] = r4007[2:0];
+assign tri_wavelength[7:0]  = r400a;
+assign tri_wavelength[10:8] = r400b[2:0];
+
+wire[3:0] noise_pindex  = r400e[3:0];
+wire      noise_rngtype = r400e[7];
+
+wire[5:0] sq1_lcount    = r4003[7:3];
+wire[5:0] sq2_lcount    = r4007[7:3];
+wire[5:0] tri_lcount    = r400b[7:3];
+wire[5:0] noise_lcount  = r400f[7:3];
+
 initial begin
 	sq_tbl[0] = 0;
 	sq_tbl[1] = 196;
