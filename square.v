@@ -2,7 +2,7 @@
 
 `define MULT 25
 
-module square(input clk, input[7:0] r4000, input[7:0] r4001, inout[7:0] r4002_input, inout[7:0] r4003_input, output[3:0] vol);
+module square(input clk, input[7:0] r4000, input[7:0] r4001, input[7:0] r4002_input, input[7:0] r4003_input, output[3:0] vol);
     // constants and tables
     // If bit 5 == 0, use ltable 0
 	 reg[7:0] r4002;
@@ -105,7 +105,9 @@ module square(input clk, input[7:0] r4000, input[7:0] r4001, inout[7:0] r4002_in
         if(ptimer == 0) begin
             duty_counter <= duty_counter + 1;
         end
-        if(duty_counter < dtable[dtype] + 1) begin
+		  if(ptimer != 0) begin
+		  end
+        else if(duty_counter < dtable[dtype] + 1) begin
             out <= rvol;
         end
         else begin

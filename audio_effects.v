@@ -16,7 +16,7 @@ reg [15:0] dat;
 assign audio_output = dat;
 
 noise nc0(clk,8'b00000001,8'b00000101,0,noise_out);
-square sc0(clk,8'b10000010, 8'b0001000, 0, 0, sq1_out);
+square sc0(clk,8'b10000100, 8'b01100000, 0, 0, sq1_out);
 
 parameter SINE     = 0;
 parameter FEEDBACK = 1;
@@ -274,7 +274,7 @@ reg[14:0] sqc = 0;
 reg statusreg;
 assign status = statusreg;
 always @(posedge clk) begin
-    if (sample_end) begin
+	 if (sample_end) begin
         last_sample <= audio_input;
     end
     sqc <= sqc + 1;
@@ -298,16 +298,17 @@ always @(posedge clk) begin
 		dat <= sq_tbl[sq1_out + sq2_out] + tnd_tbl[3 * tr_out + 2 * noise_out + dmc_out];
 	 end
 	 else if(control[1]) begin
-		dat <= sq1_out > 0 ?  16'h4000 : 0;
+		  dat <= sq1_out > 0 ?  16'h4000 : 0;
+		  statusreg <= sq1_out > 0;
 	 end
-         else if(control[2]) begin
-                dat <= noise_out > 0 ? 16'h8000 : 0;
-					 statusreg <= noise_out > 0;
-         end
-         else if(control[3]) begin
-                dat <= sqc > 15'b100000000000000 ? 16'h4000 : 0;
-					 statusreg <= sqc > 15'b100000000000000 > 0;
-			end
+    else if(control[2]) begin
+		  dat <= noise_out > 0 ? 16'h4000 : 0;
+		  statusreg <= noise_out > 0;
+    end
+    else if(control[3]) begin
+		  dat <= sqc > 15'b100000000000000 ? 16'h4000 : 0;
+		  statusreg <= sqc > 15'b100000000000000 > 0;
+	 end
 end
 
 endmodule

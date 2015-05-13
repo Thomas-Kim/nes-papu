@@ -78,6 +78,15 @@ set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 set_location_assignment PIN_J8 -to LEDEXTRA
 set_location_assignment PIN_M10 -to CLOCK_50_B8A
 set_location_assignment PIN_N20 -to CLOCK_50_B6A
+set_global_assignment -name SIP_FILE clock_pll.sip
+set_global_assignment -name SOURCE_FILE clock_pll.cmp
+set_global_assignment -name QIP_FILE clock_pll.qip
+set_global_assignment -name CUSP_FILE prod.cpp
+set_global_assignment -name VERILOG_FILE clock_pll.v
+set_global_assignment -name VERILOG_FILE clock_pll/clock_pll_0002.v
+set_global_assignment -name QIP_FILE clock_pll/clock_pll_0002.qip
+set_global_assignment -name VERILOG_FILE triangle.v
+set_global_assignment -name VERILOG_FILE square.v
 set_global_assignment -name VERILOG_FILE noise.v
 set_global_assignment -name VERILOG_FILE sockit_top.v
 set_global_assignment -name VERILOG_FILE i2c_controller.v
@@ -87,6 +96,4 @@ set_global_assignment -name VERILOG_FILE audio_codec.v
 set_global_assignment -name CDF_FILE ../../Downloads/Chain1.cdf
 set_global_assignment -name CDF_FILE Chain2.cdf
 set_global_assignment -name CDF_FILE output_files/chain.cdf
-set_global_assignment -name QIP_FILE clock_pll.qip
-set_global_assignment -name SIP_FILE clock_pll.sip
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
