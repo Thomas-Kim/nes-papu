@@ -20,10 +20,10 @@ square sc0(clk,8'b10000100, 8'b01100000, 0, 0, sq1_inter);
 square sc1(clk,8'b10000100, 8'b01100000, 0, 0, sq2_inter);
 triangle tc0(clk, 0, 0, 8'b11111111, 8'b00000011, tr_inter);
 
-lengthCounter nl0(clk, r400c[5], r400f[7:3], r4015[3], r4015[3], noise_inter, noise_out);
-lengthCounter sl0(clk, r4000[5], r4003[7:3], r4015[0], r4015[0], sq1_inter, sq1_out);
-lengthCounter sl1(clk, r4004[5], r4007[7:3], r4015[1], r4015[1], sq2_inter, sq2_out);
-lengthCounter tl0(clk, r4008[7], r400b[7:3], r4015[2], r4015[2], tr_inter, tr_out);
+lengthCounter nl0(clk, r400c[5], r400f[7:3], r4015[3], r4015_out[3], noise_inter, noise_out);
+lengthCounter sl0(clk, r4000[5], r4003[7:3], r4015[0], r4015_out[0], sq1_inter, sq1_out);
+lengthCounter sl1(clk, r4004[5], r4007[7:3], r4015[1], r4015_out[1], sq2_inter, sq2_out);
+lengthCounter tl0(clk, r4008[7], r400b[7:3], r4015[2], r4015_out[2], tr_inter, tr_out);
 
 parameter SINE     = 0;
 parameter FEEDBACK = 1;
@@ -63,6 +63,7 @@ reg[8:0] r400f;
 
 // LengthCounter control/output
 reg[7:0] r4015;
+wire[7:0] r4015_out;
 
 // DMC control register fields
 
@@ -376,8 +377,9 @@ module lengthCounter (
 );
 	assign soundOut = r4015_in && ~clock_disable && time_left == 0 ? 0 : soundIn;
 	assign r4015_out = time_left != 0;
+	reg[4:0] last_length;
 	reg[6:0] time_left;
-	wire[6:0] realLength = 
+	wire[6:0] real_length = 
 		length == 0 ? 8'h5 :
 		length == 1 ? 8'h6 :
 		length == 2 ? 8'hA :
@@ -410,16 +412,18 @@ module lengthCounter (
 		length == 29 ? 8'hd :
 		length == 30 ? 8'he :
 		8'hf;
-	always @(length) begin
-		time_left <= realLength;
-	end
 	
-	divider d(clk, 29830, counterClk);
+	wire counter_clk;
+	divider d(clk, 29830, counter_clk);
 	
-	always @(posedge counterClk) begin
+	always @(length or counter_clk) begin
 		if (~r4015_in) begin
 			time_left <= 0;
 		end
+		else if (length != last_length) begin
+			time_left <= real_length;
+			last_length <= length;
+		end 
 		else if (~clock_disable) begin
 			if (time_left != 0) begin
 				time_left <= time_left - 1;

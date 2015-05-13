@@ -124,7 +124,7 @@ module square(input clk, input[7:0] r4000, input[7:0] r4001, input[7:0] r4002_in
 	 // Sweep unit
 	 // Oustide world won't see changes?
 	 // Not sure if problem
-	 always @(posedge sweepClk) begin 
+	 always @(sweepClk) begin 
 		r4002 <= newWavelength[7:0];
 		r4003[2:0] <= newWavelength[10:8];
 	 end
