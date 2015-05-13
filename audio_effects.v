@@ -294,3 +294,65 @@ always @(posedge clk) begin
 end
 
 endmodule
+
+module lengthCounter (
+	input clk,
+	input clock_disable, 
+	input[4:0] length, 
+	input r4015_in, 
+	output r4015_out
+);
+	assign r4015_out = time_left != 0;
+	reg[6:0] time_left;
+	wire[6:0] realLength = 
+		length == 0 ? 8'h5 :
+		length == 1 ? 8'h6 :
+		length == 2 ? 8'hA :
+		length == 3 ? 8'hC :
+		length == 4 ? 8'h14 :
+		length == 5 ? 8'h18 :
+		length == 6 ? 8'h28 :
+		length == 7 ? 8'h30 :
+		length == 8 ? 8'h50 :
+		length == 9 ? 8'h60 :
+		length == 10 ? 8'h1E :
+		length == 11 ? 8'h24 :
+		length == 12 ? 8'h7 :
+		length == 13 ? 8'h8 :
+		length == 14 ? 8'hE :
+		length == 15 ? 8'h10 :
+		length == 16 ? 8'h7f :
+		length == 17 ? 8'h01 :
+		length == 18 ? 8'h2 :
+		length == 19 ? 8'h3 :
+		length == 20 ? 8'h4 :
+		length == 21 ? 8'h5 :
+		length == 22 ? 8'h6 :
+		length == 23 ? 8'h7 :
+		length == 24 ? 8'h8 :
+		length == 25 ? 8'h9 :
+		length == 26 ? 8'ha :
+		length == 27 ? 8'hb :
+		length == 28 ? 8'hc :
+		length == 29 ? 8'hd :
+		length == 30 ? 8'he :
+		8'hf;
+	always @(length) begin
+		time_left <= realLength;
+	end
+	
+	divider d(clk, 29830, counterClk);
+	
+	always @(counterClk) begin
+		if (~r4015_in) begin
+			time_left <= 0;
+		end
+		else if (~clock_disable) begin
+			if (time_left == 0) begin
+				// Silence the channel
+			end
+			else begin 
+				time_left <= time_left - 1;
+			end
+		end
+endmodule
