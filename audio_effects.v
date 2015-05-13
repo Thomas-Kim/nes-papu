@@ -367,10 +367,10 @@ always @(posedge clk) begin
 
     end
 	 if(control[3]) begin
-		  r4003[4:0] <= 5'b11111;
-		  r4007[4:0] <= 5'b11111;
-		  r400b[4:0] <= 5'b11111;
-		  r400f[4:0] <= 5'b11111;
+		  r4003[4:0] <= 5'b01111;
+		  r4007[4:0] <= 5'b01111;
+		  r400b[4:0] <= 5'b01111;
+		  r400f[4:0] <= 5'b01111;
 	 end
 end
 
@@ -424,7 +424,7 @@ module lengthCounter (
 		8'hf;
 	
 	wire counter_clk;
-	divider d(clk, 29830, counter_clk);
+	divider d(clk, 29834, counter_clk);
 	
 	always @(posedge counter_clk) begin
 		if (~r4015_in) begin
