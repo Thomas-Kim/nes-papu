@@ -17,7 +17,7 @@ assign audio_output = dat;
 
 noise nc0(clk,8'b00000001,8'b00000101,0,noise_out);
 square sc0(clk,8'b10000100, 8'b01100000, 0, 0, sq1_out);
-
+triangle tc0(clk, 0, 0, 8'b11111111, 8'b00000011, tr_out);
 parameter SINE     = 0;
 parameter FEEDBACK = 1;
 
@@ -270,30 +270,12 @@ initial begin
 
 end
 
-reg[14:0] sqc = 0;
 reg statusreg;
 assign status = statusreg;
 always @(posedge clk) begin
 	 if (sample_end) begin
         last_sample <= audio_input;
     end
-    sqc <= sqc + 1;
-
-    /*if (sample_req) begin
-        if (control[FEEDBACK])
-            dat <= last_sample;
-        else if (control[SINE]) begin
-            dat <= romdata[index];
-            if (index == 7'd99)
-                index <= 7'd00;
-            else
-                index <= index + 1'b1;
-        end else
-            dat <= 16'd0;
-    end*/
-    //if(control[0]) begin
-    //    dat <= noise_en ? 16'h8003 : 16'h0000;
-    //end
 	 if(control[0]) begin
 		dat <= sq_tbl[sq1_out + sq2_out] + tnd_tbl[3 * tr_out + 2 * noise_out + dmc_out];
 	 end
@@ -306,8 +288,8 @@ always @(posedge clk) begin
 		  statusreg <= noise_out > 0;
     end
     else if(control[3]) begin
-		  dat <= sqc > 15'b100000000000000 ? 16'h4000 : 0;
-		  statusreg <= sqc > 15'b100000000000000 > 0;
+		  dat <= tr_out << 11;
+		  statusreg <= tr_out > 4'h8;
 	 end
 end
 

@@ -1,7 +1,5 @@
 `timescale 1ps/1ps
 
-`define MULT 25
-
 module noise(input clk, input[7:0] r400c, input[7:0] r400e, input[7:0] r400f, output[3:0] vol);
     // constants and tables
     // If bit 5 == 0, use ltable 0

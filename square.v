@@ -1,7 +1,5 @@
 `timescale 1ps/1ps
 
-`define MULT 25
-
 module square(input clk, input[7:0] r4000, input[7:0] r4001, input[7:0] r4002_input, input[7:0] r4003_input, output[3:0] vol);
     // constants and tables
     // If bit 5 == 0, use ltable 0
