@@ -10,6 +10,10 @@ The triangle channel, in the original NES, uses a different method of counting l
 Unlike the other channels, the triangle channel does not have adjustable volume. For the original NES, the triangle channel's volume can be adjusted by taking advantage of a side effect - the PCM channel volume has an inversely proportional relationship to the triangle channel volume, so playing a silent digital sound at a high volume will reduce the triangle channel volume. This behavior was not implemented, as the specifics are not well-documented and likely unintentional http://skrasoft.com/blog/?p=190. This method of adjusting volume is widely known but not widely used in NES games.
 ----------------------------------------------
 
+Side notes:
+The specifications laid down in the different resources we used were different (with respect to, for example, the table values for the length counter) based on which documents we checked. We ended up switching to those detailed at http://wiki.nesdev.com/w/index.php/APU_Length_Counter because they were more reasonable (in terms of beats and such) for attempting to reason about the music produced.
+We did still notice, however, that our notes were not lasting as long as we were expecting them to, so we ran some debugging steps on our divided clock, to determine whether or not it were successfully producing a satisfactorily slowed clock rate (1.79mhz -> 60 hz). Anyways, we had had our clocks switched, so we fixed that and left behind an ~1hz LED (LED4) for you to enjoy alongside your music.
+
 Overarching Notes
 >>Discuss how we borrowed code from the SAMPLE DUDE,
 >>Discuss how we changed the clock to be the same as the NES clock w/ the clock_pll,
