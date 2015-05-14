@@ -29,8 +29,8 @@ wire [15:0] audio_input;
 clock_pll pll (
     .refclk (CLOCK_50_B6A),
     .rst (reset),
-    .outclk_0 (audio_clk),
-    .outclk_1 (main_clk)
+    .outclk_0 (main_clk),
+    .outclk_1 (audio_clk)
 );
 
 i2c_av_config av_config (

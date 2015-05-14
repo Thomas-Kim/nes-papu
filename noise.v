@@ -133,13 +133,23 @@ module noise(input clk, input[7:0] r400c, input[7:0] r400e, input[7:0] r400f, ou
     end
 endmodule
 
-module divider(input base, input[15:0] count, output clk);
-    reg[15:0] counter = 0;
+module divider(input base, input[31:0] count, output clk);
+    reg[31:0] counter = 0;
     reg       outputclk = 0;
     assign clk = outputclk;
-    always@(posedge base) begin
+    /*always@(posedge base) begin
         if(counter >= count) begin
-            outputclk <= 1;
+            outputclk <= ~outputclk;
+				counter <= 0;
+		  end
+		  else begin
+				outputclk <= 0;
+		      counter <= counter + 1;
+		  end
+    end*/
+	 always@(posedge base) begin
+        if(counter >= count) begin
+            outputclk <= ~outputclk;
 				counter <= 0;
 		  end
 		  else begin

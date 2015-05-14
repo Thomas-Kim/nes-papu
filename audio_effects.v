@@ -342,7 +342,27 @@ initial begin
 end
 
 reg statusreg;
-assign status = r4015_out[2];
+//assign status = r4015_out[2];
+assign status = onL;
+wire counter_clk2;
+	//divider d2(clk, 833333, counter_clk2);
+	divider d2(clk, 29834, counter_clk2);
+	
+	reg[15:0] newclk = 0;
+	reg[15:0] cnt = 0;
+	reg lReg = 0;
+	wire onL = lReg;
+	always @(posedge counter_clk2) begin
+		if(cnt >= 60) begin
+			cnt <= 0;
+			lReg <= !lReg;
+		end
+		else begin
+			cnt <= cnt + 1;
+		end
+	end
+
+
 always @(posedge clk) begin
 	 statusreg <= tr_out > 0;
 	 if (sample_end) begin
@@ -369,10 +389,10 @@ always @(posedge clk) begin
 		  r400f[4:0] <= 5'b01111;
     end
 	 if(control[3]) begin
-		  r4003[4:0] <= 5'b01111;
-		  r4007[4:0] <= 5'b00011;
-		  r400b[4:0] <= 5'b00001;
-		  r400f[4:0] <= 5'b01111;
+		  r4003[4:0] <= 5'b00111;
+		  r4007[4:0] <= 5'b01011;
+		  r400b[4:0] <= 5'b01001;
+		  r400f[4:0] <= 5'b00111;
 	 end
 end
 
@@ -391,45 +411,49 @@ module lengthCounter (
 	assign r4015_out = time_left != 0;
 	reg[4:0] last_length = 0;
 	reg[6:0] time_left;
+	
 	wire[6:0] real_length = 
-		length == 0 ? 8'h5 :
-		length == 1 ? 8'h6 :
-		length == 2 ? 8'hA :
-		length == 3 ? 8'hC :
-		length == 4 ? 8'h14 :
-		length == 5 ? 8'h18 :
-		length == 6 ? 8'h28 :
-		length == 7 ? 8'h30 :
-		length == 8 ? 8'h50 :
-		length == 9 ? 8'h60 :
-		length == 10 ? 8'h1E :
-		length == 11 ? 8'h24 :
-		length == 12 ? 8'h7 :
-		length == 13 ? 8'h8 :
-		length == 14 ? 8'hE :
-		length == 15 ? 8'h10 :
-		length == 16 ? 8'h7f :
-		length == 17 ? 8'h01 :
-		length == 18 ? 8'h2 :
-		length == 19 ? 8'h3 :
-		length == 20 ? 8'h4 :
-		length == 21 ? 8'h5 :
-		length == 22 ? 8'h6 :
-		length == 23 ? 8'h7 :
-		length == 24 ? 8'h8 :
-		length == 25 ? 8'h9 :
-		length == 26 ? 8'ha :
-		length == 27 ? 8'hb :
-		length == 28 ? 8'hc :
-		length == 29 ? 8'hd :
-		length == 30 ? 8'he :
-		8'hf;
+		length == 5'h1f ? 30 :
+		length == 5'h1d ? 28 :
+		length == 5'h1b ? 26 :
+		length == 5'h19 ? 24 :
+		length == 5'h17 ? 22 :
+		length == 5'h15 ? 20 :
+		length == 5'h13 ? 18 :
+		length == 5'h11 ? 16 :
+		length == 5'h0f ? 14 :
+		length == 5'h0d ? 12 :
+		length == 5'h0b ? 10 :
+		length == 5'h09 ? 8 :
+		length == 5'h07 ? 6 :
+		length == 5'h05 ? 4 :
+		length == 5'h03 ? 2 :
+		length == 5'h01 ? 254 :
+		length == 5'h1e ? 32 :
+		length == 5'h1c ? 16 :
+		length == 5'h1a ? 72 :
+		length == 5'h18 ? 192 :
+		length == 5'h16 ? 96 :
+		length == 5'h14 ? 48 :
+		length == 5'h12 ? 24 :
+		length == 5'h10 ? 12 :
+		length == 5'h0e ? 26 :
+		length == 5'h0c ? 14 :
+		length == 5'h0a ? 60 :
+		length == 5'h08 ? 160 :
+		length == 5'h06 ? 80 :
+		length == 5'h04 ? 40 :
+		length == 5'h02 ? 20 :
+		length == 5'h00 ? 10 :
+		0;
+		
+		
 	
 	wire counter_clk;
 	divider d(clk, 29834, counter_clk);
 	
 	reg[15:0] newclk = 0;
-	always @(posedge clk) begin
+	always @(posedge counter_clk) begin
 		if (~r4015_in) begin
 			time_left <= 0;
 			last_length <= 0;
