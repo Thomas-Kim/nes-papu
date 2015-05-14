@@ -1,47 +1,37 @@
-Start of our report.
+NES pAPU Emulation
+Thomas Kim, Patrick Aupperle, Benny Renard
 
+The starting code for this project, including a reference implementation of the I2C protocol and code to correctly configure the audio chip, was taken from https://zhehaomao.com/blog/fpga/2014/01/15/sockit-8.html. The I2C protocol was used to control the audio chip on the FPGA. The webpage also described how to use Altera phase-locked loop circuitry to use a reference clock to create a secondary clock with a different frequency than the reference. For this project, a modified clock clocked at 1.79mhz was used in order to match the original NES sound hardware clock.
 
---------------Thomas' Section-----------------
-
-The starting code for this project, including a reference implementation of the I2C protocol and code to correctly configure the audio chip, was taken from https://zhehaomao.com/blog/fpga/2014/01/15/sockit-8.html. The I2C protocol was used to control the audio chip on the FPGA.
+The NES sound hardware is not very well documented, with a vast majority of information coming from certain individuals on the internet reverse engineering the hardware. In some cases, the information was contradictory between different sources. Two primary references used for this project were http://web.textfiles.com/games/nessound.txt and http://nesdev.com/apu_ref.txt.
 
 The noise and triangle channels had some interesting features in the original NES, some of which were deemed superfluous for this project and replaced by better alternatives.
 
 The noise channel uses a 1-bit RNG to generate a randomly variable frequency square wave whose volume is determined by a memory mapped input-only register. Following the specification of the NES random number generator, an initial configuration for a 15-bit shift register is chosen based on register input. Additionally, an extra timer (divider) is set by register input, allowing adjustable frequencies. Every timer period, the least significant bit of the shift register is consumed as RNG output, bits 1-14 are shifted right, and the new value of bit 14 is determined by taking the XOR of shift[0] and shift[1] or the XOR of shift[0] and shift[6] depending on the mode bit (Register 0x400E bit 7)
 
-The rando
+The triangle wave generator works by generating a simple 4-bit triangle wave. This is achieved by using 4 strobed XNOR gates in the original implementation, but for the sake of simplicity a simple counter was used in this project. Different pitches of the triangle wave were achieved by adjusting the internal programmable timer for the triangle channel, which increases or decreases the rate at which the triangle wave counter increments/decrements.
 
 The triangle channel, in the original NES, uses a different method of counting length than the other channels. However, the reason this is done does not appear to be to provide any additional functionality, instead it may simply be a hardware limitation which required a separate unit for the triangle unit. For this project, the regular length counter was used to control the triangle channel length.
 
 Unlike the other channels, the triangle channel does not have adjustable volume. For the original NES, the triangle channel's volume can be adjusted by taking advantage of a side effect - the PCM channel volume has an inversely proportional relationship to the triangle channel volume, so playing a silent digital sound at a high volume will reduce the triangle channel volume. This behavior was not implemented, as the specifics are not well-documented and likely unintentional http://skrasoft.com/blog/?p=190. This method of adjusting volume is widely known but not widely used in NES games.
 
+The two square channels were differentiated from the rest of the sound hardware in that they had sweep units. Through DMA control registers, the duty cycle, frequency, and volume of the square wave could be adjusted. The sweep unit is only used on the square channel and is used to sweep across frequencies. This is controlled using DMA registers.
+
+The key difference between the two square units was the behavior of the sweep unit. For one, decreasing frequency was calculated using 1’s complement. For the other, decreasing frequency was calculated using 2’s complement.
+
+DCM:
+We did not end up finishing the DCM channel, mainly because it would require reading from memory /or/ our own specific pre-set registers to output sounds. It would have basically worked by reading in a buffer of one-bit deltas; it would maintain a current output level, which it would change by one for each delta bit (0 = -1, 1 = +1). Apparently, on the original device, reading a new 8-bit buffer would require suspending the CPU for 4 cycles, so games that used this extensively to play the exact music they wanted would normally suspend gameplay for the duration of this pretty music. The output value could also be changed by a direct write to a particular register. It used a 7-bit DAC.
 
 
+All of the wave generators as well as the DCM channel are routed through the length unit in the NES. The length unit simply maintains internal counters to mute and unmute channels after certain periods of time, allowing rhythms to be sequenced. This unit is clocked at 60hz, giving a resolution of approximately 17ms for note length. In this project, the length unit was implemented in full for the 4 analog wave generators. The digital channel was not implemented, but would have followed the same logic for altering length.
 
-----------------------------------------------
-
+Wave Combinor:
+In the original implementation, the NES had several DACs (4-bit and 7-bit) associated with each channel, so that, for example, the square wave and triangle wave would each output its own analogue wave, which would be mixed with some kind of hardware mixing. We did not have access to hardware mixing; instead, we approximated the mixing the NES would have performed, before sending our values to the 16-bit DAC. We attempted to maintain the same level of quality over the sound-- that is, we were still as coarse with the values we output as the NES would have been, approximately.
+We made a table to estimate the nonlinear mixing that would have gone on in the NES, based on some specs from http://wiki.nesdev.com/w/index.php/APU_Mixer , by taking the top formulae (which describe the normalized output values as a function of the DAC values) and scaling this from [0 -> 1] -> a roughly 16-bit quantity.
+We then produced a pair of lookup tables, which used formulae slightly different from theirs (produced by some C++ code we wrote, and present in an initial block in one of our .v files). You can consult the prod.cpp file for the exact constants used.
+This setup does not respect the exact variation the output values would have had as the input values are changed, but does do something like what the original mixer would have done. Basically, we changed a sum of 1/x values into a sum of values over a bigger value, which is really not correct but still moves in the same direction as individual values get bigger.
 
 Side notes:
 The specifications laid down in the different resources we used were different (with respect to, for example, the table values for the length counter) based on which documents we checked. We ended up switching to those detailed at http://wiki.nesdev.com/w/index.php/APU_Length_Counter because they were more reasonable (in terms of beats and such) for attempting to reason about the music produced.
 We did still notice, however, that our notes were not lasting as long as we were expecting them to, so we ran some debugging steps on our divided clock, to determine whether or not it were successfully producing a satisfactorily slowed clock rate (1.79mhz -> 60 hz). Anyways, we had had our clocks switched, so we fixed that and left behind an ~1hz LED (LED4) for you to enjoy alongside your music.
 
-Overarching Notes
->>Discuss how we borrowed code from the SAMPLE DUDE,
->>Discuss how we changed the clock to be the same as the NES clock w/ the clock_pll,
->>Discuss the resources (references) we used to determine the specs of our stuff,
->>Discuss how we only had one 16-bit DAC, instead of multiple smaller DACs and (more specialized hardware) mixing.
-
-Specifics:
->>Square Wave
->>Triangle wave
-	>>Discuss how you get different pitches by sampling faster with the same triangle! :P
->>Noise channel
-	>>Woo random numbers :P
->>DCM (if we get it)
-	>>Discuss how this would be controlled in the code somewhat
-	>>Talk about how using this in an actual game (a lot) would require slowing the play due to memory accesses (each read paused CPU for 4 cycles), is stored as sequence of 1-bit deltas.
->>Wave combinor / DAC
-	>>Specific equations used-- didn't use theirs, exactly; used our own, based on the max values and such
-	>>Still used a lookup table, but scaled the values from 16'h0000 -> 16'hffff instead of 0.0 -> 1.0 (did so in C code, produced the table).
-	>>Note that this is a 16-bit shindig, BUT the NES would have only 8-bit audio (I believe)... Anyways, on the NES, I believe this mixing was done with hardware (analog hardware), which is why the (rough) scaling here was 0->1 in the equations we were using.
-	>>Didn't respect the variation amoung the diff wave types (triangle, noise, dcm) exactly. Still would be non-linear scaling, I believe.
