@@ -356,7 +356,6 @@ always @(posedge clk) begin
 		  r4000[5] <= 1;
 		  r4004[5] <= 1;
 		  r4008[7] <= 1;
-		  r4015[3:0] <= 4'b0000;
 	 end
     else if(control[2]) begin
 		  r4015[3:0] <= 4'b1111;
@@ -364,12 +363,15 @@ always @(posedge clk) begin
 		  r4000[5] <= 0;
 		  r4004[5] <= 0;
 		  r4008[7] <= 0;
-
+		  r4003[4:0] <= 5'b01111;
+		  r4007[4:0] <= 5'b00011;
+		  r400b[4:0] <= 5'b00001;
+		  r400f[4:0] <= 5'b01111;
     end
 	 if(control[3]) begin
 		  r4003[4:0] <= 5'b01111;
-		  r4007[4:0] <= 5'b01111;
-		  r400b[4:0] <= 5'b01111;
+		  r4007[4:0] <= 5'b00011;
+		  r400b[4:0] <= 5'b00001;
 		  r400f[4:0] <= 5'b01111;
 	 end
 end
@@ -385,7 +387,7 @@ module lengthCounter (
 	input[3:0] soundIn,
 	output[3:0] soundOut
 );
-	assign soundOut = r4015_in && ~clock_disable && time_left == 0 ? 0 : soundIn;
+	assign soundOut = ~r4015_in || (~clock_disable && time_left == 0) ? 0 : soundIn;
 	assign r4015_out = time_left != 0;
 	reg[4:0] last_length = 0;
 	reg[6:0] time_left;
@@ -426,7 +428,8 @@ module lengthCounter (
 	wire counter_clk;
 	divider d(clk, 29834, counter_clk);
 	
-	always @(posedge counter_clk) begin
+	reg[15:0] newclk = 0;
+	always @(posedge clk) begin
 		if (~r4015_in) begin
 			time_left <= 0;
 			last_length <= 0;
@@ -438,7 +441,6 @@ module lengthCounter (
 		else if (~clock_disable) begin
 			if (time_left != 0) begin
 				time_left <= time_left - 1;
-				last_length <= time_left == 0 ? 0 : last_length;
 			end
 		end
 	end

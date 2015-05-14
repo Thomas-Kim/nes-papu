@@ -133,25 +133,17 @@ module noise(input clk, input[7:0] r400c, input[7:0] r400e, input[7:0] r400f, ou
     end
 endmodule
 
-module clock(output clk);
-    reg clock = 1;
-    assign clk = clock;
-    always begin
-        #500;
-        clock = !clock;
-    end
-endmodule
-
 module divider(input base, input[15:0] count, output clk);
     reg[15:0] counter = 0;
     reg       outputclk = 0;
     assign clk = outputclk;
     always@(posedge base) begin
         if(counter >= count) begin
-            outputclk <= ~outputclk;
+            outputclk <= 1;
 				counter <= 0;
 		  end
 		  else begin
+				outputclk <= 0;
 		      counter <= counter + 1;
 		  end
     end
